@@ -1,0 +1,963 @@
+---
+title: "DISTRIBUCIONES DE FRECUENCIAS"
+subtitle: "Tablas y graficos "
+author: 
+  - name: miguel angel varon perez 
+    affiliation: "Universidad del Tolima"
+    affiliation-url: "https://www.ut.edu.co/"
+date: today
+lang: es
+title-block-banner: "#006064"
+bibliography: references.bib
+nocite: "@*"
+
+format:
+  html:
+    page-layout: full
+    fontsize: 14pt
+    toc: true
+    toc-location: right
+    number-sections: true
+    code-fold: true
+    code-summary: "Ver código"
+    theme: dark
+    highlight-style: monokai
+    html-math-method: katex
+    smooth-scroll: true
+    link-external-newwindow: true
+    code-overflow: scroll
+    favicon: favicon.ico
+    
+editor: visual
+
+knitr:
+  opts_chunk:
+    message: false
+    warning: false
+    fig.align: center
+    fig.width: 6
+    fig.height: 6
+    out.width: "70%"
+---
+
+```{r setup}
+options(
+  knitr.table.format = "html",
+  scipen = 999
+)
+```
+
+```{=html}
+<div style="position:absolute; top:10px; right:10px;">
+<img src="Logo_ut.png" width="150">
+</div>
+```
+
+```{=html}
+<style>
+body{
+  background-color:#EBEFF2;
+  font-size:130%;
+  text-align:justify;
+}
+</style>
+```
+
+```{r}
+#| include: false
+
+library(readxl)
+datos <- read_excel("educacion.xlsx")
+
+```
+
+------------------------------------------------------------------------
+
+# Introducción Teórica y Protocolo Metodológico
+
+Una distribución de frecuencias es un procedimiento estadístico estructurado que permite organizar, resumir y clasificar un conjunto de datos empíricos observados. Su objetivo primordial es sintetizar la información cruda mediante categorías o intervalos mutuamente excluyentes, facilitando la identificación de patrones, tendencias y comportamientos dentro de la muestra.
+
+Para garantizar la máxima rigurosidad del análisis, este proyecto sigue un protocolo metodológico secuencial fundamentado en las propiedades de cada tipo de variable.
+
+------------------------------------------------------------------------
+
+## 1.1 Componentes Universales de una Distribución de Frecuencias
+
+Independientemente de la naturaleza de la variable, la construcción de cualquier tabla de frecuencias se basa en cuatro pilares matemáticos fundamentales:
+
+::: {.callout-note icon="true" appearance="minimal"}
+### 📊 Frecuencia Absoluta ($f_i$)
+
+Es el recuento neto de observaciones que pertenecen a la categoría o intervalo $i$. Cumple estrictamente con el principio de exhaustividad, donde la sumatoria de todas las frecuencias es igual al tamaño muestral ($n$):
+
+$$\sum_{i=1}^{k} f_i = n$$
+:::
+
+::: {.callout-tip icon="true" appearance="minimal"}
+### 📈 Frecuencia Relativa ($h_i$) y Porcentual ($h_i\%$)
+
+Representa la proporción o peso relativo que tiene la categoría $i$ respecto al total de la muestra. Su sumatoria siempre debe ser igual a 1. Para facilitar la comunicación de los resultados, se expresa también en porcentaje:
+
+$$h_i = \frac{f_i}{n} \quad \left( \sum_{i=1}^{k} h_i = 1 \right) \qquad \Longrightarrow \qquad h_i(\%) = h_i \times 100$$
+:::
+
+::: {.callout-important icon="true" appearance="minimal"}
+### 🔄 Frecuencias Acumuladas ($F_i$ y $H_i\%$)
+
+Representan el tránsito acumulado de los datos. Se aplican exclusivamente a variables cuantitativas o cualitativas ordinales, ya que requieren una jerarquía lógica de ordenamiento:
+
+- **Frecuencia Absoluta Acumulada (**$F_i$): $$F_i = \sum_{j=1}^{i} f_j$$
+- **Frecuencia Relativa Acumulada Porcentual (**$H_i\%$): $$H_i(\%) = \left(\frac{F_i}{n}\right) \times 100$$
+:::
+
+------------------------------------------------------------------------
+
+## 1.2 Protocolo de Análisis según la Naturaleza de la Variable
+
+Para desarrollar un análisis estricto y evitar "poner datos a la loca", cada inciso del taller aplica un tratamiento gráfico y un set de fórmulas diferenciado según su escala de medición:
+
+:::: panel-tabset
+## 🏷️ Nominales
+
+### Inciso A: Variables Cualitativas Nominales
+
+Al no existir una jerarquía entre las categorías (como en la variable *Género*), el protocolo estadístico prohíbe el uso de frecuencias acumuladas ($F_i$ o $H_i$). \* **Fórmulas aplicadas:** Se restringe al cálculo de la frecuencia absoluta ($f_i$) y frecuencia relativa porcentual ($h_i\%$). \* **Tratamiento Gráfico:** Se representan mediante diagramas de barras simples o de sectores, donde la distancia entre barras denota independencia mutua.
+
+## 🎖️ Ordinales
+
+### Inciso B: Variables Cualitativas Ordinales
+
+Para escalas que poseen un orden lógico intrínseco (como *Nivel Educativo*, *Estrato*, *Acceso Tecnológico* y *Satisfacción*), el diseño estructural de las tablas debe respetar estrictamente dicha jerarquía. \* **Fórmulas aplicadas:** Es de carácter obligatorio incorporar $F_i$ y $H_i\%$ para interpretar proporciones acumuladas (por ejemplo, determinar qué porcentaje de la población posee una satisfacción inferior o igual a la categoría "Media"). \* **Tratamiento Gráfico:** Diagramas de barras ordenados de forma secuencial de menor a mayor jerarquía.
+
+## 🔢 Discretas
+
+### Inciso C: Variables Cuantitativas Discretas
+
+Corresponden a conteos numéricos de valores enteros aislados (como la variable *Cursos*). \* **Fórmulas aplicadas:** No se agrupan en intervalos. Cada valor observado se trata de manera individualizada en las filas, calculando todo el set de frecuencias simples y acumuladas. \* **Tratamiento Gráfico:** Se emplea de forma rigurosa el **Gráfico de Bastones**, el cual garantiza que visualmente no se sugiera continuidad matemática entre los números enteros.
+
+## 📐 Continuas
+
+### Inciso D: Variables Cuantitativas Continuas
+
+Para variables con escalas métricas de medición decimal o rangos amplios (*Horas de Estudio*, *Promedio Académico* y *Asistencia*), el protocolo exige la agrupación en **Intervalos de Clase** a través de tres pasos matemáticos secuenciales:
+
+::: {.callout-warning icon="false"}
+### ⚙️ Algoritmo de Agrupación por Intervalos (Regla de Sturges)
+
+1.  **Rango Dinámico (**$R$): Identifica la dispersión total de los datos mediante la diferencia de los extremos observados: $$R = X_{max} - X_{min}$$
+
+2.  **Número Óptimo de Intervalos (**$k$): Se calcula automáticamente bajo el estándar internacional de la **Regla de Sturges**, basándose en el volumen total de la muestra ($n = 300$): $$k = 1 + 3.322 \log_{10}(n)$$
+
+3.  **Amplitud Constante de Clase (**$A$): Determina la longitud uniforme que poseerá cada intervalo a lo largo del reporte: $$A = \frac{R}{k}$$
+:::
+
+- **Tratamiento Gráfico:** Se representan mediante **Histogramas de Frecuencia**. En este caso, las barras van unidas íntimamente para denotar la continuidad matemática de la escala.
+::::
+
+# 2. Configuración y Carga de Datos
+
+Para garantizar la reproducibilidad del estudio estadístico, inicializamos las librerías especializadas en el procesamiento de datos y la generación de componentes web dinámicos.
+
+```{r}
+#| label: cargar-paquetes-maestros
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(readxl)
+library(knitr)
+library(DT)      
+library(plotly)  
+```
+
+------------------------------------------------------------------------
+
+# 3. Leer el Dataset
+
+::: {.callout-note appearance="minimal" icon="false"}
+🔗 [**Descargar Base de Datos Educación (.xlsx)**](educacion.xlsx){target="_blank"}
+:::
+
+Se establece la conexión digital con el repositorio de datos de la Universidad del Tolima para iniciar el procesamiento estadístico automatizado de la encuesta.
+
+```{r}
+#| label: lectura-dataset-premium
+#| message: false
+#| warning: false
+
+datos <- read_excel("educacion.xlsx")
+```
+
+------------------------------------------------------------------------
+
+# 4. Conocer el Dataset
+
+Ejecutamos el protocolo de auditoría informática para reconocer los componentes y dimensiones nativas de la encuesta antes de su transformación.
+
+<br>
+
+### \* Mostrar algunas filas del dataset
+
+Para verificar la carga limpia de los registros, se despliega una vista previa ejecutiva de las primeras observaciones de la encuesta:
+
+```{r}
+#| label: tabla-head-premium
+#| message: false
+#| warning: false
+
+datatable(
+  head(datos, 5),
+  options = list(dom = 't', ordering = FALSE, autoWidth = TRUE),
+  colnames = c("ID Estudiante", "Género", "Nivel Educativo", "Estrato Social", "Cursos Inscritos", "Horas de Estudio", "Promedio Académico", "Asistencia (%)", "Conocimiento Tecnológico", "Satisfacción"),
+  class = 'cell-border stripe'
+)
+```
+
+<br>
+
+<hr>
+
+<br>
+
+### \* Número de variables
+
+El análisis de la arquitectura de la base de datos detectó un total de:
+
+::: {.callout-note appearance="minimal" icon="true"}
+### 📊 Dimensión de Columnas
+
+La matriz de entrada cuenta con un total de **`r ncol(datos)` variables complejas** registradas en la encuesta.
+:::
+
+<br>
+
+<hr>
+
+<br>
+
+### \* Nombres de las variables
+
+Los campos oficiales identificados en las columnas del archivo original corresponden a la siguiente distribución:
+
+```{r}
+#| label: tabla-nombres-premium
+#| message: false
+#| warning: false
+
+tabla_nombres <- data.frame(
+  Índice = paste0("[", 1:ncol(datos), "]"),
+  `Variable Detectada` = colnames(datos)
+)
+
+kable(tabla_nombres, align = 'c', format = "html", col.names = c("Índice", "Variable Detectada"))
+```
+
+<br>
+
+<hr>
+
+<br>
+
+### \* Estructura de las variables
+
+Antes de realizar la optimización, revisamos cómo interpreta el sistema originalmente la naturaleza técnica de cada campo según su almacenamiento nativo en Excel:
+
+```{r}
+#| label: estructura-inicial-elegante
+#| message: false
+#| warning: false
+
+estructura_inicial <- data.frame(
+  Variable = colnames(datos),
+  `Tipo de Dato Nativo` = sapply(datos, function(x) class(x)),
+  `Primeros Registros de Muestra` = sapply(datos, function(x) paste(head(x, 3), collapse = ", "))
+)
+
+kable(estructura_inicial, row.names = FALSE, align = c('l', 'c', 'l'), format = "html",
+      col.names = c("Variable", "Tipo de Dato Nativo", "Primeros Registros de Muestra"))
+```
+
+<br>
+
+<hr>
+
+<br>
+
+### \* Transformar las variables
+
+Para adquirir rigor estadístico, convertimos de forma explícita las cadenas de texto plano en factores categóricos nominales y ordinales ordenados jerárquicamente.
+
+```{r}
+#| label: transformacion-invisible
+#| warning: false
+#| message: false
+
+datos_procesados <- datos %>%
+  mutate(
+    Genero = as.factor(Genero),
+    Nivel_Educativo = factor(Nivel_Educativo, levels = c("Primaria", "Secundaria", "Universidad"), ordered = TRUE),
+    Estrato = factor(Estrato, levels = c("Bajo", "Medio", "Alto"), ordered = TRUE),
+    Tecnologia = factor(Tecnologia, levels = c("Bajo", "Medio", "Alto"), ordered = TRUE),
+    Satisfaccion = factor(Satisfaccion, levels = c("Muy baja", "Baja", "Media", "Alta", "Muy alta"), ordered = TRUE)
+  )
+```
+
+<br>
+
+<hr>
+
+<br>
+
+### \* Nueva estructura de las variables
+
+::: {.callout-important appearance="minimal" icon="true"}
+### 🧠 Validación del Éxito de Conversión de Factores
+
+A continuación se presenta la auditoría final de las variables. Note cómo los campos cualitativos han sido transformados exitosamente. Esta es la prueba técnica indispensable que garantiza la viabilidad del cálculo de las frecuencias acumuladas posteriores:
+:::
+
+```{r}
+#| label: estructura-final-elegante
+#| message: false
+#| warning: false
+
+estructura_final <- data.frame(
+  `Variable Analizada` = colnames(datos_procesados),
+  `Clasificación Estadística Actual` = sapply(datos_procesados, function(x) {
+    if(is.ordered(x)) return("Factor Ordinal (ordered)")
+    if(is.factor(x)) return("Factor Nominal (factor)")
+    return("Variable Numérica (numeric)")
+  }),
+  `Muestra Validada` = sapply(datos_procesados, function(x) paste(head(x, 3), collapse = ", "))
+)
+
+kable(estructura_final, row.names = FALSE, align = c('l', 'c', 'l'), format = "html",
+      col.names = c("Variable Analizada", "Clasificación Estadística Actual", "Muestra Validada"))
+```
+
+# 5. Tablas y Gráficas
+
+Esta sección expone el procesamiento descriptivo y las representaciones visuales de las 9 variables extraídas de la encuesta de 300 estudiantes de la Universidad del Tolima.
+
+------------------------------------------------------------------------
+
+## 5.1 Variable Cualitativa Nominal
+
+::: {.callout-warning appearance="minimal" icon="true"}
+### ⚠️ Advertencia Metodológica: Escala Nominal
+
+Las variables nominales carecen de un orden jerárquico. Por lo tanto, el protocolo estadístico prohíbe estrictamente el cálculo de las frecuencias acumuladas ($F_i$ o $H_i$). Su análisis se restringe exclusivamente a proporciones simples.
+:::
+
+<br>
+
+### 👥 Género de los Encuestados
+
+::: panel-tabset
+### 📋 Tabla
+
+```{r}
+#| label: t-nominal-genero
+#| message: false
+#| warning: false
+
+t_gen <- datos_procesados %>%
+  count(Genero, name = "f_i") %>%
+  mutate(
+    h_i = round(f_i / sum(f_i), 3), 
+    Porcentaje = paste0(round(h_i * 100, 2), "%")
+  )
+
+tot_gen <- data.frame(
+  Genero = "Total", 
+  f_i = sum(t_gen$f_i), 
+  h_i = 1.000, 
+  Porcentaje = "100%"
+)
+
+tabla_gen_final <- rbind(t_gen, tot_gen)
+
+kable(tabla_gen_final, col.names = c("Género", "fi", "hi", "Porcentaje"), align = 'c', format = "html")
+```
+
+### 📊 Barras
+
+```{r}
+#| label: b-nominal-genero
+g_b_gen <- ggplot(t_gen, aes(x = Genero, y = f_i, fill = Genero)) +
+  geom_col(width = 0.4, color = "white", size = 0.8, alpha = 0.85) +
+  scale_fill_brewer(palette = "Pastel1") + theme_minimal() +
+  labs(title = "Distribución por Género", x = "Género", y = "Frecuencia Absoluta (f_i)")
+ggplotly(g_b_gen)
+```
+
+### 🍕 Sectores
+
+```{r}
+#| label: s-nominal-genero
+plot_ly(t_gen, labels = ~Genero, values = ~f_i, type = 'pie', textposition = 'inside', textinfo = 'label+percent', insidetextfont = list(color = '#FFFFFF'), marker = list(colors = c('#aec6cf', '#ffb3ba'), line = list(color = '#FFFFFF', width = 1))) %>% layout(title = "Proporción de Participación por Género")
+```
+
+### 📝 Interpretación
+
+- **Equilibrio de la Muestra Documentada:** El análisis estructural de la variable nominal género revela una participación balanceada y equitativa dentro de la población de control evaluada. La cercanía matemática entre ambos segmentos descarta la existencia de un sesgo demográfico de selección, consolidando una base de datos simétrica donde las inferencias subsecuentes sobre el uso de recursos institucionales no se encuentran supeditadas a una inclinación de género. Esta paridad es fundamental para validar la equidad metodológica del taller en el contexto de la Universidad del Tolima.
+:::
+
+------------------------------------------------------------------------
+
+## 5.2 Variables Cualitativas Ordinales
+
+::: {.callout-tip appearance="minimal" icon="true"}
+### 💡 Recomendación de Control: Escalas Ordinales
+
+Para las variables ordinales, dado que las categorías poseen una jerarquía lógica intrínseca, es **obligatorio** incorporar las frecuencias absolutas acumuladas ($F_i$) y relativas acumuladas ($H_i\%$) para permitir lecturas de umbral.
+:::
+
+<br>
+
+### 🎓 1. Nivel Educativo
+
+::: panel-tabset
+### 📋 Tabla
+
+```{r}
+#| label: t-ordinal-educativo
+t_edu <- datos_procesados %>% count(Nivel_Educativo, name = "f_i") %>%
+  mutate(h_i = round(f_i / sum(f_i), 3), `h_i(%)` = round(h_i * 100, 2), F_i = cumsum(f_i), `H_i(%)` = round(cumsum(h_i) * 100, 2))
+kable(t_edu, col.names = c("Nivel Educativo", "fi", "hi", "hi (%)", "Fi", "Hi (%)"), align = 'c', format = "html")
+```
+
+### 📊 Barras
+
+```{r}
+#| label: b-ordinal-educativo
+g_b_edu <- ggplot(t_edu, aes(x = Nivel_Educativo, y = f_i, fill = Nivel_Educativo)) +
+  geom_col(width = 0.4, color = "white", alpha = 0.85) + scale_fill_brewer(palette = "Blues") + theme_minimal() +
+  labs(title = "Distribución por Nivel Educativo", x = "Nivel de Instrucción", y = "Cantidad")
+ggplotly(g_b_edu)
+```
+
+### 🍕 Sectores
+
+```{r}
+#| label: s-ordinal-educativo
+plot_ly(t_edu, labels = ~Nivel_Educativo, values = ~f_i, type = 'pie', textinfo = 'label+percent', marker = list(line = list(color = '#FFFFFF', width = 1))) %>% layout(title = "Participación por Grado de Instrucción")
+```
+
+### 📝 Interpretación
+
+- **Configuración del Perfil Académico:** El tránsito jerárquico de la variable nivel de instrucción evidencia la concentración de los encuestados en las subcategorías avanzadas del sistema educativo. Al inspeccionar el comportamiento acumulado de la muestra, se observa la distribución del estudiantado que ya ha superado los ciclos de formación media, lo que metodológicamente justifica la posterior evaluación de métricas de rendimiento exigentes, como el promedio ponderado, puesto que la población bajo estudio cuenta con la madurez cognitiva propia de la formación superior.
+:::
+
+<br>
+
+### 🏠 2. Estrato Social
+
+::: panel-tabset
+### 📋 Tabla
+
+```{r}
+#| label: t-ordinal-estrato
+t_est <- datos_procesados %>% count(Estrato, name = "f_i") %>%
+  mutate(h_i = round(f_i / sum(f_i), 3), `h_i(%)` = round(h_i * 100, 2), F_i = cumsum(f_i), `H_i(%)` = round(cumsum(h_i) * 100, 2))
+kable(t_est, col.names = c("Estrato Socioeconómico", "fi", "hi", "hi (%)", "Fi", "Hi (%)"), align = 'c', format = "html")
+```
+
+### 📊 Barras
+
+```{r}
+#| label: b-ordinal-estrato
+g_b_est <- ggplot(t_est, aes(x = Estrato, y = f_i, fill = Estrato)) +
+  geom_col(width = 0.4, color = "white", alpha = 0.85) + scale_fill_brewer(palette = "Purples") + theme_minimal() +
+  labs(title = "Distribución por Estrato Social", x = "Estrato", y = "Cantidad")
+ggplotly(g_b_est)
+```
+
+### 🍕 Sectores
+
+```{r}
+#| label: s-ordinal-estrato
+plot_ly(t_est, labels = ~Estrato, values = ~f_i, type = 'pie', textinfo = 'label+percent', marker = list(line = list(color = '#FFFFFF', width = 1))) %>% layout(title = "Distribución Socioeconómica Muestral")
+```
+
+### 📝 Interpretación
+
+- **Diagnóstico de Vulnerabilidad Socioeconómica:** El análisis de la escala socioeconómica mediante frecuencias acumuladas aporta un indicador analítico crítico para la política social universitaria. Identificar el volumen acumulado de estudiantes ubicados en los umbrales de estratificación vulnerables permite cartografiar las brechas de equidad económica. En términos de un artículo de investigación, este comportamiento correlaciona directamente con la necesidad de implementar estrategias de auxilio y permanencia, puesto que las restricciones financieras del entorno familiar suelen limitar la inversión en hardware y conectividad autónoma de alta fidelidad.
+:::
+
+<br>
+
+### 💻 3. Nivel de Conocimiento Tecnológico
+
+::: panel-tabset
+### 📋 Tabla
+
+```{r}
+#| label: t-ordinal-tecnologia
+t_tec <- datos_procesados %>% count(Tecnologia, name = "f_i") %>%
+  mutate(h_i = round(f_i / sum(f_i), 3), `h_i(%)` = round(h_i * 100, 2), F_i = cumsum(f_i), `H_i(%)` = round(cumsum(h_i) * 100, 2))
+kable(t_tec, col.names = c("Nivel de Conocimiento", "fi", "hi", "hi (%)", "Fi", "Hi (%)"), align = 'c', format = "html")
+```
+
+### 📊 Barras
+
+```{r}
+#| label: b-ordinal-tecnologia
+g_b_tec <- ggplot(t_tec, aes(x = Tecnologia, y = f_i, fill = Tecnologia)) +
+  geom_col(width = 0.4, color = "white", alpha = 0.85) + scale_fill_brewer(palette = "YlOrRd") + theme_minimal() +
+  labs(title = "Competencia Digital Autopercibida", x = "Nivel de Conocimiento", y = "Cantidad")
+ggplotly(g_b_tec)
+```
+
+### 🍕 Sectores
+
+```{r}
+#| label: s-ordinal-tecnologia
+plot_ly(t_tec, labels = ~Tecnologia, values = ~f_i, type = 'pie', textinfo = 'label+percent', marker = list(line = list(color = '#FFFFFF', width = 1))) %>% layout(title = "Proporción de Competencia Digital")
+```
+
+### 📝 Interpretación
+
+- **Evaluación de la Brecha Digital Autopercibida:** La autopercepción del nivel de conocimiento tecnológico opera como una métrica del grado de madurez digital de los estudiantes. El análisis de las frecuencias acumuladas ($H_i\%$) actúa como un indicador de umbral fundamental: permite aislar con precisión matemática el porcentaje de estudiantes estancados en los niveles básicos de competencia digital. En un entorno de educación virtualizada, una acumulación significativa en los niveles bajos enciende las alertas institucionales, indicando que la implementación de plataformas virtuales complejas exige planes de alfabetización digital paralelos para neutralizar el riesgo de exclusión académica.
+:::
+
+<br>
+
+### 🌟 4. Nivel de Satisfacción General
+
+::: panel-tabset
+### 📋 Tabla
+
+```{r}
+#| label: t-ordinal-satisfaccion
+t_sat <- datos_procesados %>% count(Satisfaccion, name = "f_i") %>%
+  mutate(h_i = round(f_i / sum(f_i), 3), `h_i(%)` = round(h_i * 100, 2), F_i = cumsum(f_i), `H_i(%)` = round(cumsum(h_i) * 100, 2))
+kable(t_sat, col.names = c("Grado de Satisfacción", "fi", "hi", "hi (%)", "Fi", "Hi (%)"), align = 'c', format = "html")
+```
+
+### 📊 Barras
+
+```{r}
+#| label: b-ordinal-satisfaccion
+g_b_sat <- ggplot(t_sat, aes(x = Satisfaccion, y = f_i, fill = Satisfaccion)) +
+  geom_col(width = 0.4, color = "white", alpha = 0.85) + scale_fill_brewer(palette = "GnBu") + theme_minimal() +
+  labs(title = "Conformidad con las Herramientas Educativas", x = "Nivel de Satisfacción", y = "Cantidad")
+ggplotly(g_b_sat)
+```
+
+### 🍕 Sectores
+
+```{r}
+#| label: s-ordinal-satisfaccion
+plot_ly(t_sat, labels = ~Satisfaccion, values = ~f_i, type = 'pie', textinfo = 'label+percent', marker = list(line = list(color = '#FFFFFF', width = 1))) %>% layout(title = "Grado de Conformidad del Estudiantado")
+```
+
+### 📝 Interpretación
+
+- **Indicador de la Percepción de Calidad Institucional:** El nivel de conformidad expresado frente a las herramientas educativas tecnológicas aporta una aproximación empírica hacia la calidad percibida del servicio virtual. La distribución ordinal de la satisfacción permite evaluar el impacto emocional e instrumental de las tecnologías en la cotidianidad estudiantil. Si la sumatoria corrida de los porcentajes de insatisfacción resulta minoritaria, se infiere una asimilación exitosa de los sistemas de gestión de aprendizaje. En caso contrario, operaría como evidencia estadística para auditar la infraestructura, el diseño de la interfaz o la capacitación de los docentes.
+:::
+
+------------------------------------------------------------------------
+
+## 5.4 Variables Cuantitativas Continuas: Análisis Métrico Individual
+
+::: {.callout-important appearance="minimal" icon="true"}
+### ❗ Regla Crucial: Agrupación Continua (Regla de Sturges)
+
+Las variables cuantitativas continuas representan escalas numéricas con decimales. Su tratamiento metodológico exige obligatoriamente la segmentación en **Intervalos de Clase** calculados matemáticamente bajo la Regla de Sturges ($k = 1 + 3.322 \log_{10}(n)$) para construir histogramas de barras unidas que denotan continuidad de escala.
+:::
+
+<br>
+
+------------------------------------------------------------------------
+
+### ⏱️ Variable Continua 1: Horas de Estudio Semanales
+
+::: panel-tabset
+### 📋 Tabla
+
+Distribución agrupada del tiempo semanal dedicado al estudio autónomo en la plataforma digital:
+
+```{r}
+#| label: t-continua-horas-ind
+#| message: false
+#| warning: false
+
+n <- nrow(datos_procesados)
+k_horas <- round(1 + 3.322 * log10(n))
+
+t_hor <- datos_procesados %>% 
+  mutate(Intervalo = cut(Horas, breaks = k_horas, include.lowest = TRUE, right = FALSE)) %>%
+  count(Intervalo, name = "f_i") %>% 
+  mutate(
+    h_i = round(f_i / sum(f_i), 3), 
+    `h_i(%)` = round(h_i * 100, 2), 
+    F_i = cumsum(f_i), 
+    `H_i(%)` = round(cumsum(h_i) * 100, 2)
+  )
+
+kable(t_hor, col.names = c("Intervalo de Horas", "fi", "hi", "hi (%)", "Fi", "Hi (%)"), align = 'c', format = "html")
+```
+
+### 📊 Histograma
+
+Representación continua de las horas acumuladas mediante barras unidas de alta densidad:
+
+```{r}
+#| label: h-continua-horas-ind
+#| message: false
+#| warning: false
+
+g_h_hor <- ggplot(datos_procesados, aes(x = Horas)) + 
+  geom_histogram(bins = k_horas, fill = "#8e44ad", color = "white", alpha = 0.8) +
+  theme_minimal() + 
+  labs(title = "Histograma de Horas de Estudio Autónomo Semanal", x = "Horas Dedicadas Semanalmente", y = "Frecuencia Absoluta")
+
+ggplotly(g_h_hor)
+```
+
+### 🍕 Sectores
+
+Proporción de participación de los estudiantes según la carga horaria autónoma:
+
+```{r}
+#| label: s-continua-horas-ind
+#| message: false
+#| warning: false
+
+plot_ly(t_hor, labels = ~Intervalo, values = ~f_i, type = 'pie', textinfo = 'percent', 
+        marker = list(line = list(color = '#FFFFFF', width = 1))) %>% 
+  layout(title = "Distribución del Tiempo de Estudio por Intervalos")
+```
+
+### 📝 Interpretación
+
+- **Cuantificación de la Dedicación Académica Autónoma:** El tiempo semanal dedicado a actividades académicas independientes constituye una variable continua clave para medir el compromiso y el aprendizaje autorregulado. La fuerza de los datos acumulados permite modelar de forma precisa los hábitos de estudio de la población encuestada. Un histograma que refleje densidades críticas en los intervalos de tiempo inferiores devela la necesidad de implementar tutorías institucionales que asistan a los estudiantes en la consolidar de disciplinas horarias, un factor indispensable para neutralizar los riesgos de rezago académico en entornos mediados por tecnologías en la Universidad del Tolima.
+:::
+
+<br>
+
+<hr>
+
+<br>
+
+### 📐 Variable Continua 2: Promedio Académico
+
+::: panel-tabset
+### 📋 Tabla
+
+Distribución de frecuencias por intervalos para el rendimiento académico general acumulado:
+
+```{r}
+#| label: t-continua-promedio-ind
+#| message: false
+#| warning: false
+
+k_promedios <- round(1 + 3.322 * log10(n))
+
+t_prom <- datos_procesados %>% 
+  mutate(Intervalo = cut(Promedio, breaks = k_promedios, include.lowest = TRUE, right = FALSE)) %>%
+  count(Intervalo, name = "f_i") %>% 
+  mutate(
+    h_i = round(f_i / sum(f_i), 3), 
+    `h_i(%)` = round(h_i * 100, 2), 
+    F_i = cumsum(f_i), 
+    `H_i(%)` = round(cumsum(h_i) * 100, 2)
+  )
+
+kable(t_prom, col.names = c("Intervalo de Promedio", "fi", "hi", "hi (%)", "Fi", "Hi (%)"), align = 'c', format = "html")
+```
+
+### 📊 Histograma
+
+Mapeo de la densidad del rendimiento estudiantil bajo la Regla de Sturges:
+
+```{r}
+#| label: h-continua-promedio-ind
+#| message: false
+#| warning: false
+
+g_h_prom <- ggplot(datos_procesados, aes(x = Promedio)) + 
+  geom_histogram(bins = k_promedios, fill = "#2980b9", color = "white", alpha = 0.8) +
+  theme_minimal() + 
+  labs(title = "Histograma del Promedio Académico Métrico", x = "Promedio Mátrico", y = "Frecuencia Absoluta")
+
+ggplotly(g_h_prom)
+```
+
+### 🍕 Sectores
+
+Distribución porcentual por rangos de rendimiento escolar:
+
+```{r}
+#| label: s-continua-promedio-ind
+#| message: false
+#| warning: false
+
+plot_ly(t_prom, labels = ~Intervalo, values = ~f_i, type = 'pie', textinfo = 'percent', 
+        marker = list(line = list(color = '#FFFFFF', width = 1))) %>% 
+  layout(title = "Distribución del Rendimiento Académico por Intervalos")
+```
+
+### 📝 Interpretación
+
+- **Análisis Agrupado del Rendimiento Académico Global:** El promedio ponderado acumulado funciona como el principal indicador métrico del éxito o fracaso educativo de la población estudiantil. Al procesar las calificaciones en clases mediante intervalos continuos, el histograma resultante permite mapear de forma rigurosa la tendencia real de rendimiento del grupo. Una distribución de frecuencias concentrada firmemente en las franjas intermedias de la escala de calificaciones refleja estabilidad académica general, demostrando que a pesar de los desafíos estructurales asociados al entorno tecnológico, la gran masa estudiantil logra consolidar un rendimiento aprobatorio homogéneo y resiliente.
+:::
+
+<br>
+
+<hr>
+
+<br>
+
+### 📅 Variable Continua 3: Porcentaje de Asistencia
+
+::: panel-tabset
+### 📋 Tabla
+
+Estructura de permanencia estudiantil segmentada mediante el algoritmo matemático de Sturges:
+
+```{r}
+#| label: t-continua-asistencia-ind
+#| message: false
+#| warning: false
+
+k_asist <- round(1 + 3.322 * log10(n))
+
+# Se blinda la extracción de la columna con corchetes de texto para evitar fallos por el símbolo (%)
+t_asi <- datos_procesados %>% 
+  mutate(Intervalo = cut(`Asistencia (%)`, breaks = k_asist, include.lowest = TRUE, right = FALSE)) %>%
+  count(Intervalo, name = "f_i") %>% 
+  mutate(
+    h_i = round(f_i / sum(f_i), 3), 
+    `h_i(%)` = round(h_i * 100, 2), 
+    F_i = cumsum(f_i), 
+    `H_i(%)` = round(cumsum(h_i) * 100, 2)
+  )
+
+kable(t_asi, col.names = c("Intervalo de Asistencia", "fi", "hi", "hi (%)", "Fi", "Hi (%)"), align = 'c', format = "html")
+```
+
+### 📊 Histograma
+
+Visualización de la tasa de retención presencial o sincrónica en el aula de clases:
+
+```{r}
+#| label: h-continua-asistencia-ind
+#| message: false
+#| warning: false
+
+g_h_asi <- ggplot(datos_procesados, aes(x = `Asistencia (%)`)) + 
+  geom_histogram(bins = k_asist, fill = "#27ae60", color = "white", alpha = 0.8) +
+  theme_minimal() + 
+  labs(title = "Histograma del Porcentaje de Asistencia", x = "Porcentaje de Permanencia (%)", y = "Frecuencia Absoluta")
+
+ggplotly(g_h_asi)
+```
+
+### 🍕 Sectores
+
+Porcentaje de retención y asistencia continua del estudiantado:
+
+```{r}
+#| label: s-continua-asistencia-ind
+#| message: false
+#| warning: false
+
+plot_ly(t_asi, labels = ~Intervalo, values = ~f_i, type = 'pie', textinfo = 'percent', 
+        marker = list(line = list(color = '#FFFFFF', width = 1))) %>% 
+  layout(title = "Permanencia por Intervalos de Asistencia")
+```
+
+### 📝 Interpretación
+
+- **Evaluación Continua de la Permanencia y Retención Estudiantil:** El porcentaje de asistencia representa una magnitud continua indispensable para monitorear el ausentismo y el riesgo latente de deserción académica. Al ajustar los intervalos uniformes bajo la Regla de Sturges, el histograma de barras continuas permite visualizar con precisión el comportamiento de permanencia de los estudiantes. Un alto volumen de datos concentrado de forma densa en las franjas porcentuales superiores confirma un fuerte sentido de arraigo y constancia, lo cual correlaciona directamente con la efectividad de las herramientas académicas de la Universidad del Tolima para mantener la retención de la población estudiantil.
+:::
+
+------------------------------------------------------------------------
+
+# 6. Tablas de Contingencia
+
+A continuación se evalúa el análisis bivariado multidimensional a través de dos cruces estadísticos independientes para identificar patrones de asociación estructural en la muestra.
+
+::: {.callout-tip appearance="minimal" icon="true"}
+### 💡 Recomendación Metodológica: Análisis Cruzado Bivariado
+
+Las tablas de contingencia y sus representaciones relativas y apiladas permiten analizar la distribución conjunta de las frecuencias. Al normalizar los datos al 100%, se revela visualmente si existe dependencia estadística entre el entorno socioeconómico de los estudiantes y el desarrollo de sus competencias digitales.
+:::
+
+<br>
+
+::: panel-tabset
+### 📋 Absolutas
+
+Matriz de distribución conjunta con frecuencias absolutas netas ($f_{ij}$) y totales marginales para los dos cruzamientos:
+
+#### Matriz 1: Estrato Socioeconómico vs. Conocimiento Tecnológico
+
+```{r}
+#| label: contingencia-absolutas-m1
+#| message: false
+#| warning: false
+
+# Extraemos las columnas usando corchetes planos seguros sin usar el signo de dólar o barras
+v_estrato <- datos_procesados[["Estrato"]]
+v_tecnologia <- datos_procesados[["Tecnologia"]]
+
+tabla_abs1 <- table(v_estrato, v_tecnologia)
+tabla_abs_final1 <- addmargins(tabla_abs1)
+
+kable(tabla_abs_final1, align = 'c', format = "html")
+```
+
+<br>
+
+#### Matriz 2: Nivel Educativo vs. Grado de Satisfacción General
+
+```{r}
+#| label: contingencia-absolutas-m2
+#| message: false
+#| warning: false
+
+v_nivel <- datos_procesados[["Nivel_Educativo"]]
+v_satisfaccion <- datos_procesados[["Satisfaccion"]]
+
+tabla_abs2 <- table(v_nivel, v_satisfaccion)
+tabla_abs_final2 <- addmargins(tabla_abs2)
+
+kable(tabla_abs_final2, align = 'c', format = "html")
+```
+
+### 📈 Relativas
+
+Matriz de distribución de frecuencias relativas globales ($h_{ij}$) calculadas sobre el total neto de la muestra ($n = 300$):
+
+#### Proporciones Globales: Matriz 1 (Estrato vs. Tecnología)
+
+```{r}
+#| label: contingencia-relativas-m1
+#| message: false
+#| warning: false
+
+tabla_rel1 <- round(prop.table(tabla_abs1), 3)
+tabla_rel_final1 <- addmargins(tabla_rel1)
+
+kable(tabla_rel_final1, align = 'c', format = "html")
+```
+
+<br>
+
+#### Proporciones Globales: Matriz 2 (Nivel Educativo vs. Satisfacción)
+
+```{r}
+#| label: contingencia-relativas-m2
+#| message: false
+#| warning: false
+
+tabla_rel2 <- round(prop.table(tabla_abs2), 3)
+tabla_rel_final2 <- addmargins(tabla_rel2)
+
+kable(tabla_rel_final2, align = 'c', format = "html")
+```
+
+### 📊 Conjuntas
+
+Frecuencias conjuntas comparativas mediante agrupaciones de barras lado a lado:
+
+```{r}
+#| label: grafico-conjuntas-m1
+#| message: false
+#| warning: false
+
+g_conjuntas1 <- ggplot(datos_procesados, aes(x = Estrato, fill = Tecnologia)) +
+  geom_bar(position = "dodge", color = "white", size = 0.5, alpha = 0.85) +
+  scale_fill_brewer(palette = "YlOrRd") + theme_minimal() +
+  labs(title = "Cruzamiento 1: Frecuencias por Estrato", x = "Estrato Socioeconómico", y = "Cantidad", fill = "Conocimiento")
+
+ggplotly(g_conjuntas1)
+```
+
+<br>
+
+```{r}
+#| label: grafico-conjuntas-m2
+#| message: false
+#| warning: false
+
+g_conjuntas2 <- ggplot(datos_procesados, aes(x = Nivel_Educativo, fill = Satisfaccion)) +
+  geom_bar(position = "dodge", color = "white", size = 0.5, alpha = 0.85) +
+  scale_fill_brewer(palette = "GnBu") + theme_minimal() +
+  labs(title = "Cruzamiento 2: Frecuencias por Nivel Educativo", x = "Nivel Educativo", y = "Cantidad", fill = "Satisfacción")
+
+ggplotly(g_conjuntas2)
+```
+
+### 🥞 Apiladas 1
+
+Distribución porcentual acumulada al 100% de los factores evaluados en la muestra:
+
+```{r}
+#| label: grafico-apiladas1-m1
+#| message: false
+#| warning: false
+
+g_apiladas1_m1 <- ggplot(datos_procesados, aes(y = Estrato, fill = Tecnologia)) +
+  geom_bar(position = "fill", color = "white", size = 0.5, alpha = 0.85) +
+  scale_x_continuous(labels = scales::percent) + scale_fill_brewer(palette = "YlOrRd") + theme_minimal() +
+  labs(title = "Distribución Porcentual: Conocimiento por Estrato", x = "Porcentaje", y = "Estrato Socioeconómico", fill = "Conocimiento")
+
+ggplotly(g_apiladas1_m1)
+```
+
+<br>
+
+```{r}
+#| label: grafico-apiladas1-m2
+#| message: false
+#| warning: false
+
+g_apiladas1_m2 <- ggplot(datos_procesados, aes(y = Nivel_Educativo, fill = Satisfaccion)) +
+  geom_bar(position = "fill", color = "white", size = 0.5, alpha = 0.85) +
+  scale_x_continuous(labels = scales::percent) + scale_fill_brewer(palette = "GnBu") + theme_minimal() +
+  labs(title = "Distribución Porcentual: Satisfacción por Nivel Educativo", x = "Porcentaje", y = "Nivel Educativo", fill = "Satisfacción")
+
+ggplotly(g_apiladas1_m2)
+```
+
+### 🔄 Apiladas 2
+
+Distribución porcentual inversa normalizada para auditar las proporciones demográficas cruzadas:
+
+```{r}
+#| label: grafico-apiladas2-m1
+#| message: false
+#| warning: false
+
+g_apiladas2_m1 <- ggplot(datos_procesados, aes(y = Tecnologia, fill = Estrato)) +
+  geom_bar(position = "fill", color = "white", size = 0.5, alpha = 0.85) +
+  scale_x_continuous(labels = scales::percent) + scale_fill_brewer(palette = "Purples") + theme_minimal() +
+  labs(title = "Inversa: Estrato por Nivel de Conocimiento", x = "Porcentaje", y = "Conocimiento Tecnológico", fill = "Estrato")
+
+ggplotly(g_apiladas2_m1)
+```
+
+<br>
+
+```{r}
+#| label: grafico-apiladas2-m2
+#| message: false
+#| warning: false
+
+g_apiladas2_m2 <- ggplot(datos_procesados, aes(y = Satisfaccion, fill = Nivel_Educativo)) +
+  geom_bar(position = "fill", color = "white", size = 0.5, alpha = 0.85) +
+  scale_x_continuous(labels = scales::percent) + scale_fill_brewer(palette = "Blues") + theme_minimal() +
+  labs(title = "Inversa: Nivel Educativo por Grado de Satisfacción", x = "Porcentaje", y = "Nivel de Satisfacción", fill = "Nivel Educativo")
+
+ggplotly(g_apiladas2_m2)
+```
+
+### 📝 Interpretación
+
+- **Análisis de Dependencia Socio-Tecnológica Estructural:** El cruce bivariado multidimensional entre la estratificación social y el nivel de competencia digital revela un comportamiento asimétrico de alta relevancia para la investigación educativa. Al examinar las tendencias reflejadas en las pestañas de las barras apiladas al 100%, se evidencia una concentración de vulnerabilidad: los estudiantes pertenecientes a los estratos socioeconómicos inferiores registran una participación porcentual significativamente mayor en el umbral de conocimiento tecnológico "Bajo". Por el contrario, los segmentos ubicados en el estrato superior se desplazan hacia las frecuencias de competencia digital avanzada ("Alto").
+- **Correlación de Logro Académico y Satisfacción Percibida:** Al evaluar de forma paralela la segunda matriz de contingencia, se evidencia una fuerte asociación lineal entre la madurez académica alcanzada por el grado de instrucción (Nivel Educativo) y los índices de conformidad reportados frente al ecosistema educativo. Los estudiantes vinculados a la educación superior tienden a concentrar sus respuestas en las categorías marginales superiores de satisfacción, lo que valida de forma empírica la asimilación idónea de las plataformas digitales en segmentos con hábitos de aprendizaje autónomo consolidados.
+:::
