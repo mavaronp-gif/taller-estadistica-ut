@@ -2,7 +2,7 @@
 title: "DISTRIBUCIONES DE FRECUENCIAS"
 subtitle: "Tablas y graficos "
 author: 
-  - name: miguel angel varon perez 
+  - name: miguel angel varon perez y Juan Esteban Bermúdez Lozano
     affiliation: "Universidad del Tolima"
     affiliation-url: "https://www.ut.edu.co/"
 date: today
