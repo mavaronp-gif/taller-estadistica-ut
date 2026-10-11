@@ -608,8 +608,12 @@ ggplotly(g_e_cur)
 
 La tabla presenta la distribución del número de cursos inscritos realizados por los 300 individuos de la muestra, mostrando el comportamiento específico de la carga académica matriculada simultáneamente. Al evaluar el diagrama de bastones aislados, se ubica el comportamiento típico o moda del volumen de asignaturas. En términos acumulados, el comportamiento del polígono escalonado aporta un indicador logístico de alta relevancia institucional en la Universidad del Tolima, permitiendo proyectar el nivel de saturación operativa de los estudiantes y estimar su disponibilidad de tiempo real para el autoaprendizaje en entornos virtuales.
 
+## 
+:::
+
 ## 5.4 Variables Cuantitativas Continuas: Métricas de Rendimiento y Tiempo
 
+::: {.callout-important appearance="minimal" icon="true"}
 ### ❗ Importante
 
 La variable continua se tabula con intervalos
@@ -669,7 +673,40 @@ round(rango_h / k_h, 1)
 #| echo: true
 k_h <- round(1 + 3.322 * log10(300))
 amp_h <- round((max(datos_procesados[["Horas"]]) - min(datos_procesados[["Horas"]])) / k_h, 1)
-k_h * amp_h
+rc_h <- k_h * amp_h
+rc_h
+```
+
+### Diferencia
+
+```{r}
+#| label: dif-horas-oficial
+#| echo: true
+rango_h <- max(datos_procesados[["Horas"]]) - min(datos_procesados[["Horas"]])
+k_h <- round(1 + 3.322 * log10(300))
+amp_h <- round(rango_h / k_h, 1)
+rc_h <- k_h * amp_h
+dif_h <- rc_h - rango_h
+dif_h
+```
+
+### Mínimo y Máximo corregido
+
+```{r}
+#| label: minmax-corregido-horas
+#| echo: true
+min_orig <- min(datos_procesados[["Horas"]])
+rango_h <- max(datos_procesados[["Horas"]]) - min(datos_procesados[["Horas"]])
+k_h <- round(1 + 3.322 * log10(300))
+amp_h <- round(rango_h / k_h, 1)
+rc_h <- k_h * amp_h
+dif_h <- rc_h - rango_h
+
+# Distribución equitativa del desfase
+min_corr <- min_orig - round(dif_h / 2, 1)
+max_corr <- min_corr + rc_h
+
+cat("Mínimo Corregido:", min_corr, "\nMaximum Corregido:", max_corr)
 ```
 :::
 
@@ -688,28 +725,64 @@ La amplitud debe tener tanto decimales como lo tienen los datos originales. Si t
 #| label: t-horas-final-sturges
 #| message: false
 #| warning: false
+min_orig <- min(datos_procesados[["Horas"]])
+rango_h <- max(datos_procesados[["Horas"]]) - min(datos_procesados[["Horas"]])
 k_h <- round(1 + 3.322 * log10(300))
+amp_h <- round(rango_h / k_h, 1)
+rc_h <- k_h * amp_h
+dif_h <- rc_h - rango_h
+min_corr <- min_orig - round(dif_h / 2, 1)
+max_corr <- min_corr + rc_h
+
+cortes_h <- seq(min_corr, max_corr, by = amp_h)
+
 t_hor <- datos_procesados %>% 
-  mutate(Intervalo = cut(Horas, breaks = k_h, include.lowest = TRUE, right = FALSE)) %>%
+  mutate(Intervalo = cut(Horas, breaks = cortes_h, include.lowest = TRUE, right = FALSE)) %>%
   count(Intervalo, name = "f_i") %>% 
   mutate(h_i = round(f_i / sum(f_i), 3), `h_i(%)` = round(h_i * 100, 2), F_i = cumsum(f_i), `H_i(%)` = round(cumsum(h_i) * 100, 2))
 kable(t_hor, col.names = c("Intervalo de Horas", "fi", "hi", "hi (%)", "Fi", "Hi (%)"), align = 'c', format = "html")
 ```
 
-### 📊 Histograma
+### 📊 Histograma y Densidad
 
 ```{r}
-#| label: h-horas-final-sturges
+#| label: h-horas-final-densidad
+#| message: false
+#| warning: false
 g_h_hor <- ggplot(datos_procesados, aes(x = Horas)) + 
-  geom_histogram(bins = round(1 + 3.322 * log10(300)), fill = "#8e44ad", color = "white", alpha = 0.8) +
-  theme_minimal() + labs(title = "Histograma de Horas de Estudio Autónomo Semanal", x = "Horas", y = "Frecuencia Absoluta")
+  geom_histogram(aes(y = ..density..), bins = round(1 + 3.322 * log10(300)), fill = "#8e44ad", color = "white", alpha = 0.6) +
+  geom_density(color = "#9b59b6", size = 1.2) +
+  theme_minimal() + labs(title = "Histograma de Densidad de Horas de Estudio", x = "Horas", y = "Densidad")
 ggplotly(g_h_hor)
+```
+
+### 📉 Ojiva
+
+```{r}
+#| label: o-horas-ojiva
+#| message: false
+#| warning: false
+# Reconstrucción de marcas de clase e histograma acumulado para la Ojiva tradicional
+k_h <- round(1 + 3.322 * log10(300))
+cortes_h <- seq(min(datos_procesados[["Horas"]]), max(datos_procesados[["Horas"]]), length.out = k_h + 1)
+tabla_acum <- datos_procesados %>% 
+  mutate(Intervalo = cut(Horas, breaks = cortes_h, include.lowest = TRUE, right = FALSE)) %>%
+  count(Intervalo) %>% mutate(F_i = cumsum(n))
+
+g_ojiva_h <- ggplot(tabla_acum, aes(x = as.numeric(Intervalo), y = F_i)) +
+  geom_line(color = "#8e44ad", size = 1) + geom_point(color = "#9b59b6", size = 3) +
+  theme_minimal() + labs(title = "Ojiva de Frecuencias Acumuladas (Horas)", x = "Intervalos de Clase", y = "Frecuencia Acumulada (F_i)")
+ggplotly(g_ojiva_h)
 ```
 
 ### 📝 Interpretacion
 
-El análisis agrupado por intervalos calculados mediante la Regla de Sturges permite observar de manera científica la distribución del tiempo semanal dedicado al autoaprendizaje por los 300 estudiantes evaluados de la Universidad del Tolima.
+El análisis bivariado agrupado por intervalos calculados bajo la metodología del Rango Corregido permite modelar de forma rigurosa la distribución real del tiempo de estudio autónomo de la muestra estudiantil.
 :::
+
+<br>
+
+<hr>
 
 <br>
 
@@ -765,7 +838,38 @@ round(rango_p / k_p, 1)
 #| echo: true
 k_p <- round(1 + 3.322 * log10(300))
 amp_p <- round((max(datos_procesados[["Promedio"]]) - min(datos_procesados[["Promedio"]])) / k_p, 1)
-k_p * amp_p
+rc_p <- k_p * amp_p
+rc_p
+```
+
+### Diferencia
+
+```{r}
+#| label: dif-prom-oficial
+#| echo: true
+rango_p <- max(datos_procesados[["Promedio"]]) - min(datos_procesados[["Promedio"]])
+k_p <- round(1 + 3.322 * log10(300))
+amp_p <- round(rango_p / k_p, 1)
+rc_p <- k_p * amp_p
+dif_p <- rc_p - rango_p
+dif_p
+```
+
+### Mínimo y Máximo corregido
+
+```{r}
+#| label: minmax-corregido-promedio
+#| echo: true
+min_orig_p <- min(datos_procesados[["Promedio"]])
+rango_p <- max(datos_procesados[["Promedio"]]) - min(datos_procesados[["Promedio"]])
+k_p <- round(1 + 3.322 * log10(300))
+amp_p <- round(rango_p / k_p, 1)
+rc_p <- k_p * amp_p
+dif_p <- rc_p - rango_p
+
+min_corr_p <- min_orig_p - round(dif_p / 2, 1)
+max_corr_p <- min_corr_p + rc_p
+cat("Mínimo Corregido:", min_corr_p, "\nMaximum Corregido:", max_corr_p)
 ```
 :::
 
@@ -778,30 +882,59 @@ k_p * amp_p
 #| label: t-prom-final-sturges
 #| message: false
 #| warning: false
+min_orig_p <- min(datos_procesados[["Promedio"]])
+rango_p <- max(datos_procesados[["Promedio"]]) - min(datos_procesados[["Promedio"]])
 k_p <- round(1 + 3.322 * log10(300))
+amp_p <- round(rango_p / k_p, 1)
+rc_p <- k_p * amp_p
+dif_p <- rc_p - rango_p
+min_corr_p <- min_orig_p - round(dif_p / 2, 1)
+max_corr_p <- min_corr_p + rc_p
+
+cortes_p <- seq(min_corr_p, max_corr_p, by = amp_p)
+
 t_prom <- datos_procesados %>% 
-  mutate(Intervalo = cut(Promedio, breaks = k_p, include.lowest = TRUE, right = FALSE)) %>%
+  mutate(Intervalo = cut(Promedio, breaks = cortes_p, include.lowest = TRUE, right = FALSE)) %>%
   count(Intervalo, name = "f_i") %>% 
   mutate(h_i = round(f_i / sum(f_i), 3), `h_i(%)` = round(h_i * 100, 2), F_i = cumsum(f_i), `H_i(%)` = round(cumsum(h_i) * 100, 2))
 kable(t_prom, col.names = c("Intervalo de Promedio", "fi", "hi", "hi (%)", "Fi", "Hi (%)"), align = 'c', format = "html")
 ```
 
-### 📊 Histograma
+### 📊 Histograma y Densidad
 
 ```{r}
-#| label: h-prom-final-sturges
+#| label: h-prom-final-densidad
+#| message: false
+#| warning: false
 g_h_prom <- ggplot(datos_procesados, aes(x = Promedio)) + 
-  geom_histogram(bins = round(1 + 3.322 * log10(300)), fill = "#2980b9", color = "white", alpha = 0.8) +
-  theme_minimal() + labs(title = "Histograma del Promedio Académico", x = "Promedio Mátrico", y = "Frecuencia Absoluta")
+  geom_histogram(aes(y = ..density..), bins = round(1 + 3.322 * log10(300)), fill = "#2980b9", color = "white", alpha = 0.6) +
+  geom_density(color = "#3498db", size = 1.2) +
+  theme_minimal() + labs(title = "Histograma de Densidad del Promedio Académico", x = "Promedio Mátrico", y = "Densidad")
 ggplotly(g_h_prom)
+```
+
+### 📉 Ojiva
+
+```{r}
+#| label: o-prom-ojiva
+#| message: false
+#| warning: false
+k_p <- round(1 + 3.322 * log10(300))
+cortes_p <- seq(min(datos_procesados[["Promedio"]]), max(datos_procesados[["Promedio"]]), length.out = k_p + 1)
+tabla_acum_p <- datos_procesados %>% 
+  mutate(Intervalo = cut(Promedio, breaks = cortes_p, include.lowest = TRUE, right = FALSE)) %>%
+  count(Intervalo) %>% mutate(F_i = cumsum(n))
+
+g_ojiva_p <- ggplot(tabla_acum_p, aes(x = as.numeric(Intervalo), y = F_i)) +
+  geom_line(color = "#2980b9", size = 1) + geom_point(color = "#3498db", size = 3) +
+  theme_minimal() + labs(title = "Ojiva de Frecuencias Acumuladas (Promedio)", x = "Intervalos de Clase", y = "Frecuencia Acumulada (F_i)")
+ggplotly(g_ojiva_p)
 ```
 
 ### 📝 Interpretacion
 
-Al procesar las calificaciones globales en clases de escala continua mediante intervalos calculados, se devela la tendencia real de rendimiento aprobatorio homogéneo de la población de estudiantes.
+La distribución continua del rendimiento escolar ponderado evidencia estabilidad central, donde los intervalos cerrados demuestran consistencia con los modelos teóricos de Sturges.
 :::
-
-<br>
 
 ### 📅 Variable Continua 3: Generación de intervalos ASISTENCIA
 
@@ -855,7 +988,38 @@ round(rango_a / k_a, 1)
 #| echo: true
 k_a <- round(1 + 3.322 * log10(300))
 amp_a <- round((max(datos_procesados[["Asistencia (%)"]]) - min(datos_procesados[["Asistencia (%)"]])) / k_a, 1)
-k_a * amp_a
+rc_a <- k_a * amp_a
+rc_a
+```
+
+### Diferencia
+
+```{r}
+#| label: dif-asist-oficial
+#| echo: true
+rango_a <- max(datos_procesados[["Asistencia (%)"]]) - min(datos_procesados[["Asistencia (%)"]])
+k_a <- round(1 + 3.322 * log10(300))
+amp_a <- round(rango_a / k_a, 1)
+rc_a <- k_a * amp_a
+dif_a <- rc_a - rango_a
+dif_a
+```
+
+### Mínimo y Máximo corregido
+
+```{r}
+#| label: minmax-corregido-asistencia
+#| echo: true
+min_orig_a <- min(datos_procesados[["Asistencia (%)"]])
+rango_a <- max(datos_procesados[["Asistencia (%)"]]) - min(datos_procesados[["Asistencia (%)"]])
+k_a <- round(1 + 3.322 * log10(300))
+amp_a <- round(rango_a / k_a, 1)
+rc_a <- k_a * amp_a
+dif_a <- rc_a - rango_a
+
+min_corr_a <- min_orig_a - round(dif_a / 2, 1)
+max_corr_a <- min_corr_a + rc_a
+cat("Mínimo Corregido:", min_corr_a, "\nMáximo Corregido:", max_corr_a)
 ```
 :::
 
@@ -868,27 +1032,69 @@ k_a * amp_a
 #| label: t-asist-final-sturges
 #| message: false
 #| warning: false
+min_orig_a <- min(datos_procesados[["Asistencia (%)"]])
+rango_a <- max(datos_procesados[["Asistencia (%)"]]) - min(datos_procesados[["Asistencia (%)"]])
 k_a <- round(1 + 3.322 * log10(300))
+amp_a <- round(rango_a / k_a, 1)
+rc_a <- k_a * amp_a
+dif_a <- rc_a - rango_a
+min_corr_a <- min_orig_a - round(dif_a / 2, 1)
+max_corr_a <- min_corr_a + rc_a
+
+# Estructuramos los cortes basados en las nuevas fronteras de la guía
+cortes_a <- seq(min_corr_a, max_corr_a, by = amp_a)
+
 t_asi <- datos_procesados %>% 
-  mutate(Intervalo = cut(`Asistencia (%)`, breaks = k_a, include.lowest = TRUE, right = FALSE)) %>%
+  mutate(Intervalo = cut(`Asistencia (%)`, breaks = cortes_a, include.lowest = TRUE, right = FALSE)) %>%
   count(Intervalo, name = "f_i") %>% 
   mutate(h_i = round(f_i / sum(f_i), 3), `h_i(%)` = round(h_i * 100, 2), F_i = cumsum(f_i), `H_i(%)` = round(cumsum(h_i) * 100, 2))
 kable(t_asi, col.names = c("Intervalo de Asistencia", "fi", "hi", "hi (%)", "Fi", "Hi (%)"), align = 'c', format = "html")
 ```
 
-### 📊 Histograma
+### 📊 Histograma y Densidad
 
 ```{r}
-#| label: h-asist-final-sturges
+#| label: h-asist-final-densidad
+#| message: false
+#| warning: false
 g_h_asi <- ggplot(datos_procesados, aes(x = `Asistencia (%)`)) + 
-  geom_histogram(bins = round(1 + 3.322 * log10(300)), fill = "#27ae60", color = "white", alpha = 0.8) +
-  theme_minimal() + labs(title = "Histograma del Porcentaje de Asistencia", x = "Porcentaje (%)", y = "Frecuencia Absoluta")
+  geom_histogram(aes(y = ..density..), bins = round(1 + 3.322 * log10(300)), fill = "#27ae60", color = "white", alpha = 0.6) +
+  geom_density(color = "#2ecc71", size = 1.2) +
+  theme_minimal() + labs(title = "Histograma de Densidad del Porcentaje de Asistencia", x = "Porcentaje (%)", y = "Densidad")
 ggplotly(g_h_asi)
 ```
 
-### 📝 Interpretacion
+### 📉 Ojiva
 
-La segmentación en intervalos de amplitud uniforme bajo el algoritmo matemático de Sturges modela de forma precisa el comportamiento de retención y permanencia de la población académica sincrónica.
+```{r}
+#| label: o-asist-ojiva
+#| message: false
+#| warning: false
+
+k_a <- round(1 + 3.322 * log10(300))
+min_orig_a <- min(datos_procesados[["Asistencia (%)"]])
+rango_a <- max(datos_procesados[["Asistencia (%)"]]) - min(datos_procesados[["Asistencia (%)"]])
+amp_a <- round(rango_a / k_a, 1)
+rc_a <- k_a * amp_a
+dif_a <- rc_a - rango_a
+min_corr_a <- min_orig_a - round(dif_a / 2, 1)
+max_corr_a <- min_corr_a + rc_a
+
+cortes_a <- seq(min_corr_a, max_corr_a, by = amp_a)
+
+tabla_acum_a <- datos_procesados %>% 
+  mutate(Intervalo = cut(`Asistencia (%)`, breaks = cortes_a, include.lowest = TRUE, right = FALSE)) %>%
+  count(Intervalo) %>% 
+  mutate(F_i = cumsum(n))
+
+g_ojiva_a <- ggplot(tabla_acum_a, aes(x = as.numeric(Intervalo), y = F_i)) +
+  geom_line(color = "#27ae60", size = 1) + 
+  geom_point(color = "#2ecc71", size = 3) +
+  theme_minimal() + 
+  labs(title = "Ojiva de Frecuencias Acumuladas (Asistencia)", x = "Intervalos de Clase", y = "Frecuencia Acumulada (F_i)")
+
+ggplotly(g_ojiva_a)
+```
 :::
 
 # 6.5 Tablas de contingencia
